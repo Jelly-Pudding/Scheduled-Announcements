@@ -1,0 +1,40 @@
+# ScheduledAnnouncements Configuration
+
+# This plugin allows you to schedule announcements using cron expressions.
+# Each announcement has a unique identifier, a cron schedule, and a message.
+
+# Structure:
+# announcements:
+#   your_unique_id:
+#     cron: "cron expression"
+#     message: "Your announcement message | Optional clickable URL"
+
+# The unique identifier can be any string (no spaces), for example:
+# - hourly_reminder
+# - weekend_event
+
+# Cron Expression Format: "Second Minute Hour DayOfMonth Month DayOfWeek Year"
+# Please use this site to generate cron expressions: https://www.freeformatter.com/cron-expression-generator-quartz.html
+# All time fields are based on the server's time zone.
+
+# Advanced Example:
+# announcements:
+#   limited_time_announcement:
+#     cron: "0 0 20 1-7 * ?"  # At 8:00 PM, only for the first 7 days of each month
+#     message: "Limited time offer: 50% off store items this week only! Click here! | https://www.youtube.com/watch?v=xvFZjo5PgG0"
+
+# Tips:
+# - Ensure each announcement has a unique identifier
+# - Invalid cron expressions will be logged as warnings and skipped
+# - To add a clickable link, append it to the message after a pipe character (|)
+# - You can add as many announcements as needed
+# - Use the reload command after changing this config for the changes to take effect.
+
+announcements:
+  server_advertise:
+    cron: "0 0/30 * * * ?"  # Every 30 minutes
+    message: "MinecraftOffline.net is a cool server!"
+
+  discord_invite:
+    cron: "0 0 */3 * * ?"  # Every 3 hours
+    message: "Join our Discord community! | https://discord.gg/a83FESY3jF"
