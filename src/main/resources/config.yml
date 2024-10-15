@@ -1,5 +1,11 @@
 # ScheduledAnnouncements Configuration
 
+# Global settings
+settings:
+  prefix:
+    text: "[Announcement]"  # Set to "" (empty string) to disable the prefix
+    color: "gold"  # Use color names from NamedTextColor
+
 # This plugin allows you to schedule announcements using cron expressions.
 # Each announcement has a unique identifier, a cron schedule, and a message.
 
@@ -34,7 +40,12 @@ announcements:
   server_advertise:
     cron: "0 0/30 * * * ?"  # Every 30 minutes
     message: "MinecraftOffline.net is a cool server!"
+    prefix:
+      text: "[Ad]"
+      color: "green"
 
   discord_invite:
     cron: "0 0 */3 * * ?"  # Every 3 hours
     message: "Join our Discord community! | https://discord.gg/a83FESY3jF"
+    prefix:
+      text: ""
