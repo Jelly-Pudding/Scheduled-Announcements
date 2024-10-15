@@ -22,8 +22,10 @@ import java.util.*;
 
 public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
 
-    private Map<String, ExecutionTime> announcements;
+    private Map<String, AnnouncementConfig> announcements;
     private CronParser cronParser;
+    private String globalPrefixText;
+    private NamedTextColor globalPrefixColor;
 
     @Override
     public void onEnable() {
@@ -47,6 +49,19 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
         reloadConfig();
         announcements.clear();
         FileConfiguration config = getConfig();
+
+        // Load global settings
+        ConfigurationSection settingsSection = config.getConfigurationSection("settings");
+        if (settingsSection != null) {
+            ConfigurationSection prefixSection = settingsSection.getConfigurationSection("prefix");
+            if (prefixSection != null) {
+                globalPrefixText = prefixSection.getString("text", "[Announcement]");
+                String colorName = prefixSection.getString("color", "gold");
+                globalPrefixColor = NamedTextColor.NAMES.value(colorName.toLowerCase());
+                if (globalPrefixColor == null) globalPrefixColor = NamedTextColor.GOLD;
+            }
+        }
+
         ConfigurationSection announcementsSection = config.getConfigurationSection("announcements");
         if (announcementsSection != null) {
             for (String key : announcementsSection.getKeys(false)) {
@@ -56,7 +71,21 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
                     try {
                         Cron cron = cronParser.parse(cronExpression);
                         ExecutionTime executionTime = ExecutionTime.forCron(cron);
-                        announcements.put(message, executionTime);
+
+                        // Load announcement-specific prefix settings
+                        String prefixText = globalPrefixText;
+                        NamedTextColor prefixColor = globalPrefixColor;
+                        ConfigurationSection annPrefixSection = announcementsSection.getConfigurationSection(key + ".prefix");
+                        if (annPrefixSection != null) {
+                            prefixText = annPrefixSection.getString("text", globalPrefixText);
+                            String annColorName = annPrefixSection.getString("color");
+                            if (annColorName != null) {
+                                NamedTextColor annColor = NamedTextColor.NAMES.value(annColorName.toLowerCase());
+                                if (annColor != null) prefixColor = annColor;
+                            }
+                        }
+
+                        announcements.put(key, new AnnouncementConfig(message, executionTime, prefixText, prefixColor));
                     } catch (IllegalArgumentException e) {
                         getLogger().warning("Invalid cron expression for announcement: " + key);
                     }
@@ -71,22 +100,27 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
 
     private void checkAndBroadcastAnnouncements() {
         ZonedDateTime now = ZonedDateTime.now();
-        for (Map.Entry<String, ExecutionTime> entry : announcements.entrySet()) {
-            if (entry.getValue().isMatch(now)) {
-                broadcastAnnouncement(entry.getKey());
+        for (Map.Entry<String, AnnouncementConfig> entry : announcements.entrySet()) {
+            if (entry.getValue().executionTime.isMatch(now)) {
+                broadcastAnnouncement(entry.getValue());
             }
         }
     }
 
-    private void broadcastAnnouncement(String announcement) {
-        Component message = parseAnnouncement(announcement);
+    private void broadcastAnnouncement(AnnouncementConfig config) {
+        Component message = parseAnnouncement(config);
         Bukkit.getServer().broadcast(message);
     }
 
-    private Component parseAnnouncement(String announcement) {
-        String[] parts = announcement.split("\\|");
-        Component message = Component.text("[Announcement] ", NamedTextColor.GOLD)
-                .append(Component.text(parts[0].trim(), NamedTextColor.YELLOW));
+    private Component parseAnnouncement(AnnouncementConfig config) {
+        String[] parts = config.message.split("\\|");
+        Component message = Component.empty();
+
+        if (!config.prefixText.isEmpty()) {
+            message = message.append(Component.text(config.prefixText + " ", config.prefixColor));
+        }
+
+        message = message.append(Component.text(parts[0].trim(), NamedTextColor.YELLOW));
 
         if (parts.length > 1) {
             message = message.append(Component.text(" [Click here]", NamedTextColor.AQUA)
@@ -122,5 +156,19 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
             }
         }
         return completions;
+    }
+
+    private static class AnnouncementConfig {
+        String message;
+        ExecutionTime executionTime;
+        String prefixText;
+        NamedTextColor prefixColor;
+
+        AnnouncementConfig(String message, ExecutionTime executionTime, String prefixText, NamedTextColor prefixColor) {
+            this.message = message;
+            this.executionTime = executionTime;
+            this.prefixText = prefixText;
+            this.prefixColor = prefixColor;
+        }
     }
 }
