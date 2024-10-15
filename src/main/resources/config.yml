@@ -3,38 +3,28 @@
 # Global settings
 settings:
   prefix:
-    text: "[Announcement]"  # Set to "" (empty string) to disable the prefix
-    color: "gold"  # Use color names from NamedTextColor
+    text: "[Announcement]"  # Set to "" (empty string) to disable the global prefix
+    color: "gold"  # Color names: https://jd.advntr.dev/api/4.17.0/net/kyori/adventure/text/format/NamedTextColor.html
+  message_color: "yellow"  # Default color for all announcement messages
 
-# This plugin allows you to schedule announcements using cron expressions.
-# Each announcement has a unique identifier, a cron schedule, and a message.
-
+# Announcements Configuration
 # Structure:
 # announcements:
-#   your_unique_id:
+#   unique_identifier:
 #     cron: "cron expression"
-#     message: "Your announcement message | Optional clickable URL"
-
-# The unique identifier can be any string (no spaces), for example:
-# - hourly_reminder
-# - weekend_event
+#     message: "Your message | Optional URL"
+#     prefix:  # Optional: Overrides global prefix for this announcement
+#       text: "Custom prefix"
+#       color: "color_name"
+#     message_color: "color_name"  # Optional: Overrides global message color
 
 # Cron Expression Format: "Second Minute Hour DayOfMonth Month DayOfWeek Year"
-# Please use this site to generate cron expressions: https://www.freeformatter.com/cron-expression-generator-quartz.html
-# All time fields are based on the server's time zone.
-
-# Advanced Example:
-# announcements:
-#   limited_time_announcement:
-#     cron: "0 0 20 1-7 * ?"  # At 8:00 PM, only for the first 7 days of each month
-#     message: "Limited time offer: 50% off store items this week only! Click here! | https://www.youtube.com/watch?v=xvFZjo5PgG0"
+# Use https://www.freeformatter.com/cron-expression-generator-quartz.html for help with cron expressions
+# Time is based on the server's timezone
 
 # Tips:
-# - Ensure each announcement has a unique identifier
-# - Invalid cron expressions will be logged as warnings and skipped
-# - To add a clickable link, append it to the message after a pipe character (|)
-# - You can add as many announcements as needed
-# - Use the reload command after changing this config for the changes to take effect.
+# - To add a clickable URL, append it to the message after a pipe character (|)
+# - Use '/scheduledannouncements reload' after changing this config
 
 announcements:
   server_advertise:
@@ -43,9 +33,14 @@ announcements:
     prefix:
       text: "[Ad]"
       color: "green"
+    message_color: "aqua"
 
   discord_invite:
     cron: "0 0 */3 * * ?"  # Every 3 hours
-    message: "Join our Discord community! | https://discord.gg/a83FESY3jF"
+    message: "Join our Discord community - click here! | https://discord.gg/a83FESY3jF"
     prefix:
-      text: ""
+      text: ""  # Empty string disables the prefix for this announcement
+    message_color: "light_purple"
+
+  # Add more announcements as needed - the 'unique identifier' like 'server_advertise' and
+  # 'discord_invite' seen above can be named anything at all.

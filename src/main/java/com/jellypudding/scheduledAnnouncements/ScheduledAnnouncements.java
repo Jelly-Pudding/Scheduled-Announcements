@@ -26,6 +26,7 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
     private CronParser cronParser;
     private String globalPrefixText;
     private NamedTextColor globalPrefixColor;
+    private NamedTextColor globalMessageColor;
 
     @Override
     public void onEnable() {
@@ -56,10 +57,13 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
             ConfigurationSection prefixSection = settingsSection.getConfigurationSection("prefix");
             if (prefixSection != null) {
                 globalPrefixText = prefixSection.getString("text", "[Announcement]");
-                String colorName = prefixSection.getString("color", "gold");
-                globalPrefixColor = NamedTextColor.NAMES.value(colorName.toLowerCase());
+                String prefixColorName = prefixSection.getString("color", "gold");
+                globalPrefixColor = NamedTextColor.NAMES.value(prefixColorName.toLowerCase());
                 if (globalPrefixColor == null) globalPrefixColor = NamedTextColor.GOLD;
             }
+            String messageColorName = settingsSection.getString("message_color", "yellow");
+            globalMessageColor = NamedTextColor.NAMES.value(messageColorName.toLowerCase());
+            if (globalMessageColor == null) globalMessageColor = NamedTextColor.YELLOW;
         }
 
         ConfigurationSection announcementsSection = config.getConfigurationSection("announcements");
@@ -72,20 +76,29 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
                         Cron cron = cronParser.parse(cronExpression);
                         ExecutionTime executionTime = ExecutionTime.forCron(cron);
 
-                        // Load announcement-specific prefix settings
+                        // Load announcement-specific settings
                         String prefixText = globalPrefixText;
                         NamedTextColor prefixColor = globalPrefixColor;
-                        ConfigurationSection annPrefixSection = announcementsSection.getConfigurationSection(key + ".prefix");
-                        if (annPrefixSection != null) {
-                            prefixText = annPrefixSection.getString("text", globalPrefixText);
-                            String annColorName = annPrefixSection.getString("color");
-                            if (annColorName != null) {
-                                NamedTextColor annColor = NamedTextColor.NAMES.value(annColorName.toLowerCase());
-                                if (annColor != null) prefixColor = annColor;
+                        NamedTextColor messageColor = globalMessageColor;
+                        ConfigurationSection annSection = announcementsSection.getConfigurationSection(key);
+                        if (annSection != null) {
+                            ConfigurationSection annPrefixSection = annSection.getConfigurationSection("prefix");
+                            if (annPrefixSection != null) {
+                                prefixText = annPrefixSection.getString("text", globalPrefixText);
+                                String annPrefixColorName = annPrefixSection.getString("color");
+                                if (annPrefixColorName != null) {
+                                    NamedTextColor annPrefixColor = NamedTextColor.NAMES.value(annPrefixColorName.toLowerCase());
+                                    if (annPrefixColor != null) prefixColor = annPrefixColor;
+                                }
+                            }
+                            String annMessageColorName = annSection.getString("message_color");
+                            if (annMessageColorName != null) {
+                                NamedTextColor annMessageColor = NamedTextColor.NAMES.value(annMessageColorName.toLowerCase());
+                                if (annMessageColor != null) messageColor = annMessageColor;
                             }
                         }
 
-                        announcements.put(key, new AnnouncementConfig(message, executionTime, prefixText, prefixColor));
+                        announcements.put(key, new AnnouncementConfig(message, executionTime, prefixText, prefixColor, messageColor));
                     } catch (IllegalArgumentException e) {
                         getLogger().warning("Invalid cron expression for announcement: " + key);
                     }
@@ -120,12 +133,14 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
             message = message.append(Component.text(config.prefixText + " ", config.prefixColor));
         }
 
-        message = message.append(Component.text(parts[0].trim(), NamedTextColor.YELLOW));
+        Component contentComponent = Component.text(parts[0].trim(), config.messageColor);
 
         if (parts.length > 1) {
-            message = message.append(Component.text(" [Click here]", NamedTextColor.AQUA)
-                    .clickEvent(ClickEvent.openUrl(parts[1].trim())));
+            String url = parts[1].trim();
+            contentComponent = contentComponent.clickEvent(ClickEvent.openUrl(url));
         }
+
+        message = message.append(contentComponent);
 
         return message;
     }
@@ -163,12 +178,14 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
         ExecutionTime executionTime;
         String prefixText;
         NamedTextColor prefixColor;
+        NamedTextColor messageColor;
 
-        AnnouncementConfig(String message, ExecutionTime executionTime, String prefixText, NamedTextColor prefixColor) {
+        AnnouncementConfig(String message, ExecutionTime executionTime, String prefixText, NamedTextColor prefixColor, NamedTextColor messageColor) {
             this.message = message;
             this.executionTime = executionTime;
             this.prefixText = prefixText;
             this.prefixColor = prefixColor;
+            this.messageColor = messageColor;
         }
     }
 }
