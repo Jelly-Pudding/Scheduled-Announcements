@@ -67,4 +67,8 @@ Use color names from [NamedTextColor](https://jd.advntr.dev/api/4.17.0/net/kyori
 - You can disable the prefix for specific announcements by setting the prefix text to an empty string.
 
 ## Support Me
-Donations to my [Patreon](https://www.patreon.com/lolwhatyesme) will help with the development of this plugin (and other Paper plugins too).
+Donations will help me with the development of this project.
+
+One-off donation: https://ko-fi.com/lolwhatyesme
+
+Patreon: https://www.patreon.com/lolwhatyesme
