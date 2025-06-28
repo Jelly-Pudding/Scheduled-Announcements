@@ -1,9 +1,10 @@
 name: ScheduledAnnouncements
-version: '1.0.2'
+version: '1.0.3'
 main: com.jellypudding.scheduledAnnouncements.ScheduledAnnouncements
 api-version: '1.21'
 description: "Broadcasts scheduled announcements to all players."
 author: AlphaAlex115
+website: www.minecraftoffline.net
 commands:
   scheduledannouncements:
     description: "Manage the ScheduledAnnouncements plugin"

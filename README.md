@@ -1,6 +1,5 @@
-# ScheduledAnnouncements Plugin
-
-**ScheduledAnnouncements** is a Minecraft Paper 1.21.4 plugin that allows server administrators to schedule automated announcements using cron expressions.
+# ScheduledAnnouncements
+**ScheduledAnnouncements** is a Minecraft Paper 1.21.6 plugin that allows server administrators to schedule automated announcements using cron expressions.
 
 ## Features
 - Schedule announcements using cron expressions for precise timing.
@@ -67,8 +66,4 @@ Use color names from [NamedTextColor](https://jd.advntr.dev/api/4.17.0/net/kyori
 - You can disable the prefix for specific announcements by setting the prefix text to an empty string.
 
 ## Support Me
-Donations will help me with the development of this project.
-
-One-off donation: https://ko-fi.com/lolwhatyesme
-
-Patreon: https://www.patreon.com/lolwhatyesme
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K715TC1R)
