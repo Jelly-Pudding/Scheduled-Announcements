@@ -1,5 +1,5 @@
 # ScheduledAnnouncements
-**ScheduledAnnouncements** is a Minecraft Paper 1.21.6 plugin that allows server administrators to schedule automated announcements using cron expressions.
+**ScheduledAnnouncements** is a Minecraft Paper 1.21.7 plugin that allows server administrators to schedule automated announcements using cron expressions.
 
 ## Features
 - Schedule announcements using cron expressions for precise timing.
