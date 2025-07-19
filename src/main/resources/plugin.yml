@@ -1,5 +1,5 @@
 name: ScheduledAnnouncements
-version: '1.0.4'
+version: '1.0.5'
 main: com.jellypudding.scheduledAnnouncements.ScheduledAnnouncements
 api-version: '1.21'
 description: "Broadcasts scheduled announcements to all players."
