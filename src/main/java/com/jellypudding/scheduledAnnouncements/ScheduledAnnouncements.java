@@ -37,6 +37,11 @@ public class ScheduledAnnouncements extends JavaPlugin implements TabCompleter {
         startAnnouncementTask();
         Objects.requireNonNull(getCommand("scheduledannouncements")).setExecutor(this);
         Objects.requireNonNull(getCommand("scheduledannouncements")).setTabCompleter(this);
+
+        // Initialise bStats
+        int pluginId = 27565;
+        new Metrics(this, pluginId);
+
         getLogger().info("ScheduledAnnouncements plugin has been enabled!");
     }
 
