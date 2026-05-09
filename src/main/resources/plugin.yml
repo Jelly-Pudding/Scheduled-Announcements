@@ -1,7 +1,7 @@
 name: ScheduledAnnouncements
-version: '1.0.7'
+version: '${version}'
 main: com.jellypudding.scheduledAnnouncements.ScheduledAnnouncements
-api-version: '1.21'
+api-version: '26.1.2'
 description: "Broadcasts scheduled announcements to all players."
 author: AlphaAlex115
 website: www.minecraftoffline.net

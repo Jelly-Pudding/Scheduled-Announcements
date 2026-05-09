@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.jellypudding'
-version = '1.0.7'
+version = '1.0.8'
 
 repositories {
     mavenCentral()
@@ -18,11 +18,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
     implementation("com.cronutils:cron-utils:9.2.1")
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(targetJavaVersion)
